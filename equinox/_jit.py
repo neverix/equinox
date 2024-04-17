@@ -265,7 +265,7 @@ def filter_jit(
     fun=sentinel,
     *,
     donate: Literal[
-        "all", "all-except-first", "warn", "warn-except-first", "none"
+        "all", "all-except-first", "warn", "warn-except-first", "none", "first"
     ] = "none",
     **jitkwargs,
 ):
@@ -282,6 +282,7 @@ def filter_jit(
             argument, and suppress all warnings about unused buffers;
         - `'warn'`: as above, but don't suppress unused buffer warnings;
         - `'warn-except-first'`: as above, but don't suppress unused buffer warnings;
+        - `'first`: only buffers in the first argument, no warnings
         - `'none'`: no buffer donation. (This the default.)
 
     **Returns:**
@@ -355,6 +356,10 @@ def filter_jit(
     elif donate == "none":
         filter_warning = False
         donate_first = False
+        donate_rest = False
+    elif donate == "first":
+        filter_warning = True
+        donate_first = True
         donate_rest = False
     else:
         raise ValueError(
